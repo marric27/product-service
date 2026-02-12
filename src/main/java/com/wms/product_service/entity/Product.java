@@ -1,0 +1,39 @@
+package com.wms.product_service.entity;
+
+import com.github.f4b6a3.ulid.UlidCreator;
+import com.wms.product_service.util.Category;
+import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
+@Entity
+@Getter
+@Setter
+@AllArgsConstructor
+@NoArgsConstructor
+public class Product {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @Column(nullable = false, unique = true, length = 26)
+    private String code;
+
+    @PrePersist
+    public void prePersist() {
+        if (code == null) {
+            String ulid = UlidCreator.getUlid().toString();
+            this.code = "PRD-" + ulid.substring(0, 10).toUpperCase();
+        }
+    }
+
+    @Column(nullable = false)
+    private String name;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private Category category;
+}
